@@ -1,0 +1,2 @@
+openpyxl
+SQLAlchemy==1.0.15

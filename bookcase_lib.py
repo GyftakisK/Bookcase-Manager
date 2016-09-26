@@ -84,4 +84,3 @@ class FileManager(object):
     @staticmethod
     def load_photos():
         return [file for file in os.listdir("artifacts") if ".png" in file]
-

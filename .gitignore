@@ -2,3 +2,5 @@
 __pycache__
 bookcase_db/__pycache__
 bookcase_db/test/__pycache__
+build/
+dist/

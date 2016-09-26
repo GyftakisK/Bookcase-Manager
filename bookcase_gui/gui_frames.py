@@ -426,7 +426,7 @@ class OpenFrame(PopUpFrame):
         self.choices = choices
 
     def create_layout(self):
-        listbox = Listbox(self, width=30, font=FONT_11_NORMAL)
+        listbox = Listbox(self, width=60, font=FONT_11_NORMAL)
         listbox.grid(row=0, column=0, padx=10, pady=15)
 
         if not self.choices:
@@ -454,10 +454,10 @@ class OpenFrame(PopUpFrame):
 
 class CreateDb(PopUpFrame):
     def create_layout(self):
-        message = Message(self, text=Translations().enter_db_name_msg, width=200)
+        message = Message(self, text=Translations().enter_db_name_msg, width=200, font=FONT_12_NORMAL, justify=CENTER)
         message.grid(row=0, column=0, padx=20, pady=5)
 
-        database_name = Entry(self, width=30)
+        database_name = Entry(self, width=30, font=FONT_12_NORMAL, justify=CENTER)
         database_name.grid(row=1, column=0, padx=20, pady=5)
 
         ok_button_command = lambda: self.create_db(database_name.get())

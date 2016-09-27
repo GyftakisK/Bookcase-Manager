@@ -58,11 +58,21 @@ class InstanceLock(object):
 
 class FileManager(object):
     def __init__(self):
-        self._path = os.path.expanduser("~") + "/BookcaseDb/"
+        self._path = os.path.join(os.path.expanduser("~"), "BookcaseDb/")
+        self._cwd = ""
 
     @property
     def path(self):
         return self._path
+
+    @property
+    def cwd(self):
+        return self._cwd
+
+    @cwd.setter
+    def cwd(self, cwd):
+        print(cwd)
+        self._cwd = cwd
 
     def data_directory_exist(self):
         return os.path.exists(self._path)
@@ -80,7 +90,5 @@ class FileManager(object):
     def find_files_with_extension(self, extension):
         return [filename for filename in os.listdir(self._path) if extension in filename]
 
-
-    @staticmethod
-    def load_photos():
-        return [file for file in os.listdir("artifacts") if ".png" in file]
+    def load_photos(self):
+        return [file for file in os.listdir(os.path.join(self.cwd, 'artifacts')) if ".png" in file]

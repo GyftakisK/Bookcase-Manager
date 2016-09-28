@@ -3,7 +3,7 @@ import py2exe
 import os
 images = [os.path.join(os.path.abspath('artifacts'), file) for file in os.listdir('artifacts')]
 setup(name="Bookcase Manager",
-      version="1.1",
+      version="1.0",
       description="Application to manage your home library",
       windows=[{
           "script": "bookcase.py",

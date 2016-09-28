@@ -22,7 +22,6 @@ from bookcase_gui.gui import BookcaseGui
 
 if __name__ == '__main__':
     FileManager().setup_data_directory()
-    FileManager().cwd = os.getcwd()
     gui = BookcaseGui()
     try:
         gui.run()

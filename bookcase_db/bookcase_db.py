@@ -3,6 +3,7 @@ from sqlalchemy.orm import create_session
 
 from bookcase_db.data_schema import Base, Book, book_header
 import bookcase_exceptions as exc
+from bookcase_translations import Translations
 
 
 class BookcaseDbManager(object):
@@ -20,7 +21,7 @@ class BookcaseDbManager(object):
     @staticmethod
     def validate_db_name(name):
         if " " in name:
-            raise exc.InvalidInputException("DB name must not contain spaces")
+            raise exc.InvalidInputException(Translations().no_spaces_in_names_warn)
 
     def create_db(self):
         Base.metadata.create_all(self.engine)

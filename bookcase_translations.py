@@ -33,6 +33,8 @@ class Translations(object, metaclass=lib.Singleton):
                             "gr": 'Επιτυχής εξαγωγή στο '}
         self.export_excel = {"en": 'Export to Excel',
                              "gr": 'Εξαγωγή σε Excel'}
+        self.found = {"en": 'Found',
+                      "gr": 'Βρέθηκαν'}
         self.imported_from = {"en": 'Successfully Imported from ',
                               "gr": 'Επιτυχής Εισαγωγή από '}
         self.import_excel = {"en": 'Import from Excel',
@@ -67,8 +69,8 @@ class Translations(object, metaclass=lib.Singleton):
                           "gr": 'Αποθήκευση'}
         self.search_button_desc = {"en": 'Search for book(s)',
                                    "gr": 'Αναζήτηση Βιβλίων'}
-        self.search_complete_msg = {"en": 'Search complete - Double click on book to open',
-                                    "gr": 'Η αναζήτηση ολοκληρώθηκε - '
+        self.search_complete_msg = {"en": 'books - Double click on book to open',
+                                    "gr": 'βιβλία - '
                                           'Πατήστε διπλό κλικ πάνω στο βιβλίο που θέλετε να επεξεργαστείτε'}
         self.search_text = {"en": 'Search',
                             "gr": 'Αναζήτηση'}

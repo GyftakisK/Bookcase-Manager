@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from tkinter import (Frame, Button, LEFT, PhotoImage, X, Toplevel, Listbox, END, Message, Entry, Label, GROOVE,
-                     RIGHT, E, W, BOTH, StringVar, SUNKEN, CENTER, Menubutton, Menu, RAISED)
+                     RIGHT, E, W, BOTH, StringVar, SUNKEN, CENTER, Menubutton, Menu, RAISED, Scrollbar, VERTICAL, Y)
 from tkinter.ttk import Combobox
 
 from bookcase_db.bookcase_db import BookcaseDbManager
@@ -9,6 +9,7 @@ from bookcase_exceptions import InvalidInputException
 import bookcase_lib as lib
 from bookcase_gui.gui_data_schema import GuiBook
 from bookcase_translations import Translations
+import bookcase_exceptions as exc
 
 
 FONT_11_NORMAL = ('Verdana', 11, 'normal')
@@ -310,8 +311,7 @@ class SearchView(Frame):
         self.option = Combobox(self, values=self.choices, state="readonly", font=FONT_11_NORMAL)
         self.option.set(self.choices[0])
         self.search_str = Entry(self, width=60, font=FONT_11_NORMAL)
-        self.listbox = Listbox(self, width=100, font=FONT_11_NORMAL)
-        self.listbox.bind('<Double-1>', self.open_book)
+        self.listbox = None
         self.db_manager = db_manager
         self.on_close_cb_func = on_close_cb_func
         self.root = root
@@ -327,7 +327,10 @@ class SearchView(Frame):
         buttons_frame.create_buttons(buttons)
         buttons_frame.grid(row=1, columnspan=2)
 
-        self.listbox.grid(row=2, columnspan=2, pady=20)
+        listbox_with_scroll = ListboxWithScroll(self, 100, FONT_11_NORMAL, self.open_book)
+        listbox_with_scroll.create_layout()
+        listbox_with_scroll.grid(row=2, columnspan=2)
+        self.listbox = listbox_with_scroll.listbox
 
         self.pack(ipadx=40, ipady=10)
 
@@ -343,10 +346,7 @@ class SearchView(Frame):
 
     def populate_listbox_with_search_results(self, results):
         for i, book in enumerate(results):
-            self.listbox.insert(i, "{title}, {author}, {year} | {shelf}".format(title=book.title,
-                                                                                author=book.author,
-                                                                                year=book.publication_year,
-                                                                                shelf=book.shelf))
+            self.listbox.insert(i, book)
 
     def perform_db_search(self):
         self.clear_listbox()
@@ -354,7 +354,9 @@ class SearchView(Frame):
         if not self.books:
             StatusBar().set_status(Translations().no_books_found_msg)
         else:
-            StatusBar().set_status(Translations().search_complete_msg)
+            StatusBar().set_status("{found} {num} {msg}".format(found=Translations().found,
+                                                                num=len(self.books),
+                                                                msg=Translations().search_complete_msg))
             self.populate_listbox_with_search_results(self.books)
 
     def search_by(self, option, string):
@@ -475,7 +477,11 @@ class CreateDb(PopUpFrame):
     def create_db(self, selection):
         if not selection:
             return
-        self.caller_cb_func(selection)
+        try:
+            self.caller_cb_func(selection)
+        except exc.InvalidInputException as e:
+            StatusBar().set_status(e)
+            return
         self.root.destroy()
 
 
@@ -500,3 +506,16 @@ class DeleteBookPrompt(PopUpFrame):
     def confirm(self):
         self.caller_cb_func()
         self.root.destroy()
+
+
+class ListboxWithScroll(Frame):
+    def __init__(self, root, width, font, double_click_cb):
+        super(ListboxWithScroll, self).__init__(root)
+        self.scroll = Scrollbar(self, orient=VERTICAL)
+        self.listbox = Listbox(self, width=width, font=font, yscrollcommand=self.scroll.set)
+        self.scroll.config(command=self.listbox.yview)
+        self.listbox.bind('<Double-1>', double_click_cb)
+
+    def create_layout(self):
+        self.scroll.pack(side=RIGHT, fill=Y)
+        self.listbox.pack(side=LEFT, fill=BOTH, expand=1)

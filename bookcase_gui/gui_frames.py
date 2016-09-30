@@ -1,7 +1,6 @@
 from collections import OrderedDict
-from tkinter import (Frame, Button, LEFT, PhotoImage, X, Toplevel, Listbox, END, Message, Entry, Label, GROOVE,
-                     RIGHT, E, W, BOTH, StringVar, SUNKEN, CENTER, Menubutton, Menu, RAISED, Scrollbar, VERTICAL, Y)
-from tkinter.ttk import Combobox
+import tkinter as tk
+import tkinter.ttk as ttk
 
 from bookcase_db.bookcase_db import BookcaseDbManager
 from bookcase_excel.bookcase_excel import Excel
@@ -17,14 +16,14 @@ FONT_12_NORMAL = ('Verdana', 12, 'normal')
 FONT_14_NORMAL = ('Verdana', 14, 'normal')
 
 
-class ButtonToolbar(Frame):
+class ButtonToolbar(tk.Frame):
     def __init__(self, root):
         super(ButtonToolbar, self).__init__(root, bg="Light Grey")
         self.root = root
         self.photos = self.load_artifacts()
 
-    def create_toolbar_button(self, photo, command=lambda: None, on_hover_text="", side=LEFT):
-        button = Button(self, command=command)
+    def create_toolbar_button(self, photo, command=lambda: None, on_hover_text="", side=tk.LEFT):
+        button = tk.Button(self, command=command)
         button.config(image=photo, width=30, height=30)
         button.pack(side=side, padx=2, pady=2)
         button.bind("<Enter>", lambda x: StatusBar().set_status_from_event(x, on_hover_text))
@@ -35,7 +34,7 @@ class ButtonToolbar(Frame):
     def load_artifacts():
         photos = dict()
         for file in lib.FileManager().load_photos():
-            photos[file] = PhotoImage(file="artifacts/" + file)
+            photos[file] = tk.PhotoImage(file="artifacts/" + file)
         return photos
 
 
@@ -55,7 +54,7 @@ class MainToolbar(ButtonToolbar):
                                                        on_hover_text=Translations().open_button_desc))
         self.buttons.append(self.create_lang_button())
 
-        self.pack(fill=X, ipady=5)
+        self.pack(fill=tk.X, ipady=5)
 
     def clear_toolbar(self):
         for button in self.buttons:
@@ -66,7 +65,7 @@ class MainToolbar(ButtonToolbar):
         lang_changes = dict(gr="en", en="gr")
         return self.create_toolbar_button(self.photos[lang_changes[lang] + "_icon.png"],
                                           command=lambda: self.change_lang(lang_changes[lang]),
-                                          side=RIGHT)
+                                          side=tk.RIGHT)
 
     def change_lang(self, lang):
         lib.Configuration().set_config("gui_language", lang)
@@ -74,7 +73,7 @@ class MainToolbar(ButtonToolbar):
         self.setup_toolbar()
 
     def click_open(self):
-        top_level = Toplevel()
+        top_level = tk.Toplevel()
         top_level.title(Translations().open_window_title)
         OpenFrame(top_level, self.open_selected_db, lib.FileManager().find_all_db_files()).create_layout()
 
@@ -87,7 +86,7 @@ class MainToolbar(ButtonToolbar):
         self.db_view.create_db_view()
 
     def create_new_db(self):
-        top_level = Toplevel()
+        top_level = tk.Toplevel()
         top_level.title(Translations().create_window_title)
         CreateDb(top_level, self.open_selected_db).create_layout()
 
@@ -116,9 +115,9 @@ class DbView(ButtonToolbar):
     def create_db_view(self):
         self.db_manager.create_db()
         print(self.db_manager.db_name)
-        label = Label(self, bg="SteelBlue1", text=self.db_manager.db_name, font=FONT_12_NORMAL,
-                      relief=GROOVE)
-        label.pack(fill=X)
+        label = tk.Label(self, bg="SteelBlue1", text=self.db_manager.db_name, font=FONT_12_NORMAL,
+                         relief=tk.GROOVE)
+        label.pack(fill=tk.X)
 
         self.create_toolbar_button(self.photos["edit.png"],
                                    command=self.open_book_view,
@@ -130,12 +129,12 @@ class DbView(ButtonToolbar):
         self.create_toolbar_button(self.photos["exit_button.png"],
                                    command=self.close,
                                    on_hover_text=Translations().exit_button_desc)
-        self.pack(fill=X, ipady=5)
+        self.pack(fill=tk.X, ipady=5)
 
     def create_menu_button(self):
-        button = Menubutton(self)
-        button.config(image=self.photos["import_export.png"], width=34, height=34, relief=RAISED)
-        button.menu = Menu(button, tearoff=0)
+        button = tk.Menubutton(self)
+        button.config(image=self.photos["import_export.png"], width=34, height=34, relief=tk.RAISED)
+        button.menu = tk.Menu(button, tearoff=0)
         button["menu"] = button.menu
         button.bind("<Enter>", lambda x: StatusBar().set_status_from_event(x, Translations().import_export_desc))
         button.bind("<Leave>", StatusBar().clear_status_from_event)
@@ -143,10 +142,10 @@ class DbView(ButtonToolbar):
         button.menu.add_command(label=Translations().import_excel, command=self.import_from_excel, font=FONT_12_NORMAL)
         button.menu.add_command(label=Translations().export_excel, command=self.export_to_excel, font=FONT_12_NORMAL)
 
-        button.pack(side=LEFT, padx=2, pady=2)
+        button.pack(side=tk.LEFT, padx=2, pady=2)
 
     def import_from_excel(self):
-        top_level = Toplevel(self.root)
+        top_level = tk.Toplevel(self.root)
         OpenFrame(top_level, self.dump_excel_to_db, lib.FileManager().find_all_xlsx_files()).create_layout()
 
     def dump_excel_to_db(self, filename):
@@ -192,13 +191,13 @@ class DbView(ButtonToolbar):
         self.search_view = None
 
 
-class BookView(Frame):
+class BookView(tk.Frame):
     def __init__(self, root, db_manager, on_close_cb_func):
         super(BookView, self).__init__(root)
         self.gui_book = GuiBook()
 
         self.entries_desc_grid_pref_var = OrderedDict(
-            [(Translations().title_msg, (0, -1, 100, self.gui_book.get_object("title"))),
+            [(Translations().title_msg, (0, 0, 100, self.gui_book.get_object("title"))),
              (Translations().author_last_name_desc,
               (1, 0, 40, self.gui_book.get_object("author_last"))),
              (Translations().author_first_name_desc,
@@ -225,18 +224,17 @@ class BookView(Frame):
         StatusBar().clear_status()
         for key in self.entries_desc_grid_pref_var.keys():
             row, column, width, var = self.entries_desc_grid_pref_var[key]
-            msg = Message(self, text=key, width=100, justify=RIGHT, font=FONT_11_NORMAL)
-            if column == -1:
-                msg.grid(row=row, column=0, padx=5, pady=5, sticky=E)
-                Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(row=row,
-                                                                                     column=1,
-                                                                                     columnspan=3,
-                                                                                     pady=5, sticky=W)
+            msg = tk.Message(self, text=key, width=100, justify=tk.RIGHT, font=FONT_11_NORMAL)
+            msg.grid(row=row, column=0, padx=5, pady=5, sticky=tk.E)
+            if row == 0:
+                tk.Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(row=row,
+                                                                                        column=1,
+                                                                                        columnspan=3,
+                                                                                        pady=5, sticky=tk.W)
             else:
-                msg.grid(row=row, column=column, padx=5, pady=5, sticky=E)
-                Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(row=row,
-                                                                                     column=column + 1,
-                                                                                     pady=5, sticky=W)
+                tk.Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(row=row,
+                                                                                        column=column + 1,
+                                                                                        pady=5, sticky=tk.W)
 
         buttons_frame = ButtonFrame(self)
         buttons_frame.create_buttons(self.buttons)
@@ -291,7 +289,7 @@ class BookViewOpen(BookView):
         StatusBar().set_status(Translations().book_saved_msg)
 
     def delete(self):
-        top_level = Toplevel(self)
+        top_level = tk.Toplevel(self)
         DeleteBookPrompt(top_level, self.delete_book, self.book.title).create_layout()
 
     def delete_book(self):
@@ -304,13 +302,13 @@ class BookViewOpen(BookView):
         self.root.destroy()
 
 
-class SearchView(Frame):
+class SearchView(tk.Frame):
     def __init__(self, root, db_manager, on_close_cb_func):
         super(SearchView, self).__init__(root)
         self.choices = (Translations().title_text, Translations().author_text, "ISBN", Translations().shelf_text)
-        self.option = Combobox(self, values=self.choices, state="readonly", font=FONT_11_NORMAL)
+        self.option = ttk.Combobox(self, values=self.choices, state="readonly", font=FONT_11_NORMAL)
         self.option.set(self.choices[0])
-        self.search_str = Entry(self, width=60, font=FONT_11_NORMAL)
+        self.search_str = tk.Entry(self, width=60, font=FONT_11_NORMAL)
         self.listbox = None
         self.db_manager = db_manager
         self.on_close_cb_func = on_close_cb_func
@@ -318,7 +316,7 @@ class SearchView(Frame):
         self.books = None
 
     def open_search_view(self):
-        self.option.grid(row=0, column=0, pady=10, sticky=E)
+        self.option.grid(row=0, column=0, pady=10, sticky=tk.E)
         self.search_str.grid(row=0, column=1, pady=10)
 
         buttons_frame = ButtonFrame(self)
@@ -336,7 +334,7 @@ class SearchView(Frame):
 
     def clear_listbox(self):
         if self.listbox.size():
-            self.listbox.delete(0, END)
+            self.listbox.delete(0, tk.END)
 
     def get_db_search_results(self):
         if not self.search_str.get():
@@ -370,36 +368,36 @@ class SearchView(Frame):
             return self.db_manager.search_by_shelf(string)
 
     def open_book(self, event):
-        top_level = Toplevel(self.root)
+        top_level = tk.Toplevel(self.root)
         book_view = BookViewOpen(top_level, self.db_manager, self.perform_db_search,
                                  self.books[self.listbox.curselection()[-1]])
         book_view.open_book_view()
-        book_view.pack(fill=BOTH)
+        book_view.pack(fill=tk.BOTH)
 
     def close(self):
         self.on_close_cb_func()
         self.destroy()
 
 
-class ButtonFrame(Frame):
+class ButtonFrame(tk.Frame):
     def __init__(self, root):
         super(ButtonFrame, self).__init__(root)
 
     def create_buttons(self, buttons):
         for text, command in buttons.items():
-            button = Button(self, command=command)
+            button = tk.Button(self, command=command)
             button.config(text=text, width=10, height=2, font=FONT_11_NORMAL)
-            button.pack(side=LEFT, padx=8, pady=10)
+            button.pack(side=tk.LEFT, padx=8, pady=10)
 
 
-class StatusBar(Frame, metaclass=lib.Singleton):
+class StatusBar(tk.Frame, metaclass=lib.Singleton):
     def __init__(self, root=None):
         super(StatusBar, self).__init__(root)
-        self._text = StringVar()
-        self.label = Label(self, bd=1, relief=SUNKEN, anchor=W,
-                           textvariable=self._text, font=FONT_14_NORMAL)
+        self._text = tk.StringVar()
+        self.label = tk.Label(self, bd=1, relief=tk.SUNKEN, anchor=tk.W,
+                              textvariable=self._text, font=FONT_14_NORMAL)
         self._text.set(Translations().welcome_msg)
-        self.label.pack(fill=X)
+        self.label.pack(fill=tk.X)
 
     def set_status(self, text):
         self._text.set(text)
@@ -414,7 +412,7 @@ class StatusBar(Frame, metaclass=lib.Singleton):
         self._text.set("")
 
 
-class PopUpFrame(Frame):
+class PopUpFrame(tk.Frame):
     def __init__(self, root, caller_cb_func):
         super(PopUpFrame, self).__init__(root)
         self.root = root
@@ -430,15 +428,15 @@ class OpenFrame(PopUpFrame):
         self.choices = choices
 
     def create_layout(self):
-        listbox = Listbox(self, width=60, font=FONT_11_NORMAL)
+        listbox = tk.Listbox(self, width=60, font=FONT_11_NORMAL)
         listbox.grid(row=0, column=0, padx=10, pady=15)
 
         if not self.choices:
-            listbox.insert(END, Translations().no_file_found_msg + lib.FileManager().path)
+            listbox.insert(tk.END, Translations().no_file_found_msg + lib.FileManager().path)
             ok_button_command = self.root.destroy
         else:
             for choice in self.choices:
-                listbox.insert(END, choice)
+                listbox.insert(tk.END, choice)
             ok_button_command = lambda: self.open_db(listbox.get(listbox.curselection()))
 
         button_frame = ButtonFrame(self)
@@ -458,10 +456,11 @@ class OpenFrame(PopUpFrame):
 
 class CreateDb(PopUpFrame):
     def create_layout(self):
-        message = Message(self, text=Translations().enter_db_name_msg, width=200, font=FONT_12_NORMAL, justify=CENTER)
+        message = tk.Message(self, text=Translations().enter_db_name_msg, width=200,
+                             font=FONT_12_NORMAL, justify=tk.CENTER)
         message.grid(row=0, column=0, padx=20, pady=5)
 
-        database_name = Entry(self, width=30, font=FONT_12_NORMAL, justify=CENTER)
+        database_name = tk.Entry(self, width=30, font=FONT_12_NORMAL, justify=tk.CENTER)
         database_name.grid(row=1, column=0, padx=20, pady=5)
 
         ok_button_command = lambda: self.create_db(database_name.get())
@@ -491,15 +490,15 @@ class DeleteBookPrompt(PopUpFrame):
         self.book_title = book_title
 
     def create_layout(self):
-        delete_message = Message(self.root,
-                                 text="{msg} {title}?".format(msg=Translations().delete_confirm_msg,
-                                                              title=self.book_title),
-                                 width=200, justify=CENTER, font=FONT_12_NORMAL)
-        delete_message.pack(fill=X, padx=10, pady=5)
+        delete_message = tk.Message(self.root,
+                                    text="{msg} {title}?".format(msg=Translations().delete_confirm_msg,
+                                                                 title=self.book_title),
+                                    width=200, justify=tk.CENTER, font=FONT_12_NORMAL)
+        delete_message.pack(fill=tk.X, padx=10, pady=5)
         buttons = ButtonFrame(self.root)
         buttons.create_buttons(OrderedDict(
             [(Translations().ok_text, self.confirm), (Translations().cancel_text, self.root.destroy)]))
-        buttons.pack(fill=X, padx=10, pady=5)
+        buttons.pack(fill=tk.X, padx=10, pady=5)
 
         self.pack()
 
@@ -508,14 +507,14 @@ class DeleteBookPrompt(PopUpFrame):
         self.root.destroy()
 
 
-class ListboxWithScroll(Frame):
+class ListboxWithScroll(tk.Frame):
     def __init__(self, root, width, font, double_click_cb):
         super(ListboxWithScroll, self).__init__(root)
-        self.scroll = Scrollbar(self, orient=VERTICAL)
-        self.listbox = Listbox(self, width=width, font=font, yscrollcommand=self.scroll.set)
+        self.scroll = tk.Scrollbar(self, orient=tk.VERTICAL)
+        self.listbox = tk.Listbox(self, width=width, font=font, yscrollcommand=self.scroll.set)
         self.scroll.config(command=self.listbox.yview)
         self.listbox.bind('<Double-1>', double_click_cb)
 
     def create_layout(self):
-        self.scroll.pack(side=RIGHT, fill=Y)
-        self.listbox.pack(side=LEFT, fill=BOTH, expand=1)
+        self.scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)

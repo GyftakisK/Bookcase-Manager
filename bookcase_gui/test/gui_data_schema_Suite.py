@@ -1,6 +1,7 @@
 import unittest
 import tkinter as tk
-from bookcase_gui.gui_data_schema import GuiBook, InvalidInputException
+from bookcase_exceptions import InvalidInputException
+from bookcase_gui.gui_data_schema import GuiBook
 from bookcase_db.data_schema import Book
 
 

@@ -1,13 +1,15 @@
 from collections import OrderedDict
-from tkinter import (Frame, Button, LEFT, PhotoImage, TOP, X, Toplevel, Listbox, END, Message, Entry, Label, GROOVE,
+from tkinter import (Frame, Button, LEFT, PhotoImage, X, Toplevel, Listbox, END, Message, Entry, Label, GROOVE,
                      RIGHT, E, W, BOTH, StringVar, SUNKEN, CENTER, Menubutton, Menu, RAISED)
 from tkinter.ttk import Combobox
 
 from bookcase_db.bookcase_db import BookcaseDbManager
 from bookcase_excel.bookcase_excel import Excel
+from bookcase_exceptions import InvalidInputException
 import bookcase_lib as lib
-from bookcase_gui.gui_data_schema import GuiBook, InvalidInputException
-from bookcase_gui.gui_translations import Translations
+from bookcase_gui.gui_data_schema import GuiBook
+from bookcase_translations import Translations
+
 
 FONT_11_NORMAL = ('Verdana', 11, 'normal')
 FONT_12_NORMAL = ('Verdana', 12, 'normal')

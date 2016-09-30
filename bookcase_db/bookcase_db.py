@@ -1,10 +1,13 @@
 import sqlalchemy as sql
 from sqlalchemy.orm import create_session
+
 from bookcase_db.data_schema import Base, Book, book_header
+import bookcase_exceptions as exc
 
 
 class BookcaseDbManager(object):
     def __init__(self, path="", db_name="bookcase"):
+        self.validate_db_name(db_name)
         self._db_name = db_name if not ".db" in db_name else db_name.strip(".db")
         self.engine = sql.create_engine('sqlite:///{path}{db_name}.db'
                                         .format(path=path, db_name=self.db_name))
@@ -13,6 +16,11 @@ class BookcaseDbManager(object):
     @property
     def db_name(self):
         return self._db_name
+
+    @staticmethod
+    def validate_db_name(name):
+        if " " in name:
+            raise exc.InvalidInputException("DB name must not contain spaces")
 
     def create_db(self):
         Base.metadata.create_all(self.engine)

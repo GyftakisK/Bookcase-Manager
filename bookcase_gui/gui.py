@@ -1,7 +1,6 @@
 import tkinter as tk
 
 from bookcase_gui.gui_frames import MainToolbar, StatusBar
-from bookcase_gui.gui_translations import Translations
 import bookcase_lib as lib
 
 

@@ -1,5 +1,8 @@
 from tkinter import StringVar
 
+import bookcase_exceptions as exc
+from bookcase_translations import Translations
+
 
 class GuiBook(object):
     def __init__(self):
@@ -174,39 +177,39 @@ class GuiBook(object):
 
     def mandatory_fields_set(self):
         if not self.title or not self.author_last or not self.author_first:
-            raise InvalidInputException(mandatory_fields_warn)
+            raise exc.InvalidInputException(Translations().mandatory_fields_warn)
 
     def names_have_no_spaces(self):
         if " " in "".join([self.author_first, self.author_last, self.trans_last, self.trans_first, self.publisher]):
-            raise InvalidInputException(no_spaces_in_names_warn)
+            raise exc.InvalidInputException(Translations().no_spaces_in_names_warn)
 
     def translator_is_valid(self):
         if bool(self.trans_first) != bool(self.trans_last):
-            raise InvalidInputException(translator_validation_warn)
+            raise exc.InvalidInputException(Translations().translator_validation_warn)
 
     def year_is_valid(self):
         if not self.pub_year:
             return
         if len(self.pub_year) > 4 or not self.pub_year.isdigit():
-            raise InvalidInputException(year_validation_warning)
+            raise exc.InvalidInputException(Translations().year_validation_warning)
 
     def isbn_is_valid(self):
         if not self.isbn:
             return
         if len(self.isbn) not in (10, 13) or not self.isbn.isdigit():
-            raise InvalidInputException(isbn_validation_warn)
+            raise exc.InvalidInputException(Translations().isbn_validation_warn)
 
     def shelf_is_valid(self):
         if self.shelf_row and self.shelf_col:
             if not self.shelf_row.isdigit() or not self.shelf_col.isdigit():
-                raise InvalidInputException(shelf_no_numbers_warn)
+                raise exc.InvalidInputException(Translations().shelf_no_numbers_warn)
         else:
             if bool(self.shelf_col) != bool(self.shelf_row):
-                raise InvalidInputException(shelf_row_col_not_set_warn)
+                raise exc.InvalidInputException(Translations().shelf_row_col_not_set_warn)
 
     def copies_is_valid(self):
         if not self.num_of_copies.isdigit() or int(self.num_of_copies) < 1:
-            raise InvalidInputException(num_of_copies_warn)
+            raise exc.InvalidInputException(Translations().num_of_copies_warn)
 
     def changed(self, book):
         (title, author, translator, publisher,
@@ -232,7 +235,3 @@ class GuiBook(object):
         book.isbn = isbn
         book.copies = copies
         book.shelf = shelf
-
-
-class InvalidInputException(Exception):
-    pass

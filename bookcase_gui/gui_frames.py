@@ -225,16 +225,11 @@ class BookView(tk.Frame):
         for key in self.entries_desc_grid_pref_var.keys():
             row, column, width, var = self.entries_desc_grid_pref_var[key]
             msg = tk.Message(self, text=key, width=100, justify=tk.RIGHT, font=FONT_11_NORMAL)
-            msg.grid(row=row, column=0, padx=5, pady=5, sticky=tk.E)
+            msg.grid(row=row, column=column, padx=5, pady=5, sticky=tk.E)
+            entry_grid_opts = dict(row=row, column=column + 1, pady=5, sticky=tk.W)
             if row == 0:
-                tk.Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(row=row,
-                                                                                        column=1,
-                                                                                        columnspan=3,
-                                                                                        pady=5, sticky=tk.W)
-            else:
-                tk.Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(row=row,
-                                                                                        column=column + 1,
-                                                                                        pady=5, sticky=tk.W)
+                entry_grid_opts['columnspan'] = 3
+            tk.Entry(self, width=width, textvariable=var, font=FONT_11_NORMAL).grid(**entry_grid_opts)
 
         buttons_frame = ButtonFrame(self)
         buttons_frame.create_buttons(self.buttons)

@@ -1,6 +1,7 @@
-import openpyxl as xl
 import re
+import openpyxl as xl
 
+import bookcase_exceptions as exc
 import bookcase_lib as lib
 
 
@@ -13,7 +14,7 @@ class Excel(object):
         exp = re.compile(r'(?<=bookcase_).*(?=\.xlsx)')
         name = re.search(exp, filename)
         if not name:
-            raise NotBookcaseExcel()
+            raise exc.NotBookcaseExcel
         return name
 
     def read_excel(self, filename):
@@ -33,7 +34,3 @@ class Excel(object):
         file = self.path + "bookcase_{name}.xlsx".format(name=name)
         workbook.save(file)
         return file
-
-
-class NotBookcaseExcel(Exception):
-    pass

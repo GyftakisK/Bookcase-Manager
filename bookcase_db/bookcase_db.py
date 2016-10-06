@@ -7,9 +7,11 @@ from bookcase_translations import Translations
 
 
 class BookcaseDbManager(object):
+    """
+    Class that manages all DB operations
+    """
     def __init__(self, path="", db_name="bookcase"):
-        self.validate_db_name(db_name)
-        self._db_name = db_name if not ".db" in db_name else db_name.strip(".db")
+        self._db_name = self.validate_db_name(db_name)
         self.engine = sql.create_engine('sqlite:///{path}{db_name}.db'
                                         .format(path=path, db_name=self.db_name))
         self.session = create_session(bind=self.engine)
@@ -20,8 +22,15 @@ class BookcaseDbManager(object):
 
     @staticmethod
     def validate_db_name(name):
+        """
+        Validates input
+        :param name: the name of DB as specified by the user
+        :return: the filename without the extension
+        :raises: InvalidInputException if the name contains spaces
+        """
         if " " in name:
             raise exc.InvalidInputException(Translations().no_spaces_in_names_warn)
+        return name if not ".db" in name else name.strip(".db")
 
     def create_db(self):
         Base.metadata.create_all(self.engine)
@@ -71,6 +80,10 @@ class BookcaseDbManager(object):
         return self.session.query(Book).filter_by(shelf=shelf).all()
 
     def dump_table(self):
+        """
+        Dumps all entries to a 2-D array
+        :return: a tuple containing row entries as tuples
+        """
         books = self.get_all_books()
         table = list()
         table.append(book_header())
@@ -78,6 +91,10 @@ class BookcaseDbManager(object):
         return tuple(table)
 
     def import_table(self, table):
+        """
+        Creates book entries from a table and saves them to DB
+        :param table: a tuple of tuples containing book attributes
+        """
         attributes_to_index = self.get_indexes_for_book_attributes(table[0])
         books = self.create_books_from_table(attributes_to_index, table[1:])
         self.session.add_all(books)
@@ -85,10 +102,21 @@ class BookcaseDbManager(object):
 
     @staticmethod
     def get_indexes_for_book_attributes(header):
+        """
+        Maps provided table header with the header defined in schema
+        :param header: a tuple containing the header
+        :return: a dict that maps indexes of header elements to the book elements
+        """
         return dict([(attribute, header.index(attribute)) for attribute in book_header() if attribute in header])
 
     @staticmethod
     def create_books_from_table(attributes_to_index, table):
+        """
+        Converts each row of the table to a book object
+        :param attributes_to_index: a dict that maps indexes of header elements to the book elements
+        :param table: a tuple of tuples containing multiple books
+        :return: a list of book objects
+        """
         books = []
         for row in table:
             author = row[attributes_to_index["author"]]

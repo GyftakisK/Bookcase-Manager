@@ -41,6 +41,8 @@ class Translations(object, metaclass=lib.Singleton):
                              "gr":'Εισαγωγή από Excel'}
         self.import_export_desc = {"en": 'Import/Export Bookcase',
                                    "gr": 'Εισαγωγή/Εξαγωγή βιβλιοθήκης'}
+        self.invalid_xl_msg = {"en": "Excel file not created by Bookcase Manager",
+                               "gr": "Το αρχείο δεν έχει δημιουργηθεί από το πρόγραμμα"}
         self.isbn_validation_warn = {"en": 'Invalid ISBN format - Must be 10 or 13 digit long',
                                      "gr": 'Το ISBN πρέπει να αποτελείται από 10 ή 13 ψηφία'}
         self.mandatory_fields_warn = {"en": 'Fields with asterisk (*) are mandatory',

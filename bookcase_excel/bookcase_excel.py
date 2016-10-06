@@ -3,6 +3,7 @@ import openpyxl as xl
 
 import bookcase_exceptions as exc
 import bookcase_lib as lib
+from bookcase_translations import Translations
 
 
 class Excel(object):
@@ -14,7 +15,7 @@ class Excel(object):
         exp = re.compile(r'(?<=bookcase_).*(?=\.xlsx)')
         name = re.search(exp, filename)
         if not name:
-            raise exc.InvalidInputException("Excel file not created by Bookcase Manager")
+            raise exc.InvalidInputException(Translations().invalid_xl_msg)
         return name
 
     def read_excel(self, filename):

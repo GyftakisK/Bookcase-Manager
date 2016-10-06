@@ -4,7 +4,3 @@ class BookcaseManagerException(Exception):
 
 class InvalidInputException(BookcaseManagerException):
     pass
-
-
-class NotBookcaseExcel(BookcaseManagerException):
-    pass

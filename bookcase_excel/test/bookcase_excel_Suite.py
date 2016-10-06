@@ -18,13 +18,13 @@ class BookcaseExcelSuite(unittest.TestCase):
         try:
             self.bookcase_excel.validate_filename("invalid.xlsx")
             self.fail()
-        except exc.NotBookcaseExcel:
+        except exc.InvalidInputException:
             pass
 
     def test_valid_filename(self):
         try:
             self.bookcase_excel.validate_filename(self.filename)
-        except exc.NotBookcaseExcel:
+        except exc.InvalidInputException:
             self.fail()
 
     def test_write_file(self):

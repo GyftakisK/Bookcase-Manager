@@ -432,7 +432,7 @@ class OpenFrame(PopUpFrame):
         else:
             for choice in self.choices:
                 listbox.insert(tk.END, choice)
-            ok_button_command = lambda: self.open_db(listbox.get(listbox.curselection()))
+            ok_button_command = lambda: self.open_selection(listbox.get(listbox.curselection()))
 
         button_frame = ButtonFrame(self)
         buttons = OrderedDict(
@@ -442,10 +442,14 @@ class OpenFrame(PopUpFrame):
 
         self.pack()
 
-    def open_db(self, selection):
+    def open_selection(self, selection):
         if not selection:
             return
-        self.caller_cb_func(selection)
+        try:
+            self.caller_cb_func(selection)
+        except exc.BookcaseManagerException as e:
+            StatusBar().set_status(e)
+            return
         self.root.destroy()
 
 

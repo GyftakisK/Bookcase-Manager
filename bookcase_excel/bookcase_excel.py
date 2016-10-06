@@ -14,7 +14,7 @@ class Excel(object):
         exp = re.compile(r'(?<=bookcase_).*(?=\.xlsx)')
         name = re.search(exp, filename)
         if not name:
-            raise exc.NotBookcaseExcel
+            raise exc.InvalidInputException("Excel file not created by Bookcase Manager")
         return name
 
     def read_excel(self, filename):

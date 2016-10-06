@@ -5,6 +5,9 @@ from bookcase_translations import Translations
 
 
 class GuiBook(object):
+    """
+    Class that defines the book entity as viewed by User
+    """
     def __init__(self):
         self._title = StringVar()
         self._author_last = StringVar()
@@ -111,25 +114,49 @@ class GuiBook(object):
         self._shelf_col.set(val)
 
     def get_author_in_schema_form(self):
+        """
+        Wrapper method to convert author attribute from User to DB format
+        :return: author name in DB format
+        """
         return self.get_name_in_schema_form(self.author_last, self.author_first)
 
     def get_translator_in_schema_form(self):
+        """
+        Wrapper method to convert translator attribute from User to DB format
+        :return: translator name in DB format
+        """
         return self.get_name_in_schema_form(self.trans_last, self.trans_first)
 
     @staticmethod
     def get_name_in_schema_form(last, first):
+        """
+        Method to convert name attributes from User to DB format
+        :return: name in DB format
+        """
         return "{last} {first}".format(last=last, first=first)
 
     def get_shelf_in_schema_form(self):
+        """
+        Method to convert shelf attributes from User to DB format
+        :return: shelf in DB format
+        """
         return "{row}-{column}".format(row=self.shelf_row,
                                        column=self.shelf_col)
 
     @staticmethod
-    def get_name_from_schema(author):
-        return author.split(" ")
+    def get_name_from_schema(name):
+        """
+        Method to convert name attribute from DB to User format
+        :return: tuple containing last and first name
+        """
+        return name.split(" ")
 
     @staticmethod
     def get_shelf_from_schema(shelf):
+        """
+        Method to convert shelf attribute from DB to User format
+        :return: tuple containing shelf's row and column
+        """
         return shelf.split('-')
 
     def init_entries_from_book(self, book):
@@ -143,6 +170,10 @@ class GuiBook(object):
         self.shelf_row, self.shelf_col = self.get_shelf_from_schema(book.shelf)
 
     def get_book_attributes_in_schema_form(self):
+        """
+        Method to convert attribute from User to DB format
+        :return: tuple containing book attributes
+        """
         title = self.title
         author = self.get_author_in_schema_form()
         translator = self.get_translator_in_schema_form()
@@ -154,6 +185,9 @@ class GuiBook(object):
         return title, author, translator, publisher, publication_year, isbn, copies, shelf
 
     def clear_entries(self):
+        """
+        Resets book entries
+        """
         self.title = ""
         self.author_last = ""
         self.author_first = ""
@@ -167,6 +201,9 @@ class GuiBook(object):
         self.shelf_col = ""
 
     def validate_book_inputs(self):
+        """
+        Runs input validations
+        """
         self.mandatory_fields_set()
         self.names_have_no_spaces()
         self.translator_is_valid()
@@ -176,30 +213,54 @@ class GuiBook(object):
         self.copies_is_valid()
 
     def mandatory_fields_set(self):
+        """
+        Validates that Title and Author fields are not empty
+        :raises: InvalidInputException
+        """
         if not self.title or not self.author_last or not self.author_first:
             raise exc.InvalidInputException(Translations().mandatory_fields_warn)
 
     def names_have_no_spaces(self):
+        """
+        Validates that names include no spaces
+        :raises: InvalidInputException
+        """
         if " " in "".join([self.author_first, self.author_last, self.trans_last, self.trans_first, self.publisher]):
             raise exc.InvalidInputException(Translations().no_spaces_in_names_warn)
 
     def translator_is_valid(self):
+        """
+        Validates that both first and last translator's name are set
+        :raises: InvalidInputException
+        """
         if bool(self.trans_first) != bool(self.trans_last):
             raise exc.InvalidInputException(Translations().translator_validation_warn)
 
     def year_is_valid(self):
+        """
+        Validates that year has the format XXXX where X is a number
+        :raises: InvalidInputException
+        """
         if not self.pub_year:
             return
         if len(self.pub_year) > 4 or not self.pub_year.isdigit():
             raise exc.InvalidInputException(Translations().year_validation_warning)
 
     def isbn_is_valid(self):
+        """
+        Validates that ISBN has the valid number of digits (10 for old format, 13 for new)
+        :raises: InvalidInputException
+        """
         if not self.isbn:
             return
         if len(self.isbn) not in (10, 13) or not self.isbn.isdigit():
             raise exc.InvalidInputException(Translations().isbn_validation_warn)
 
     def shelf_is_valid(self):
+        """
+        Validates that both shelf's row and column are set and are numbers
+        :raises: InvalidInputException
+        """
         if self.shelf_row and self.shelf_col:
             if not self.shelf_row.isdigit() or not self.shelf_col.isdigit():
                 raise exc.InvalidInputException(Translations().shelf_no_numbers_warn)
@@ -208,10 +269,19 @@ class GuiBook(object):
                 raise exc.InvalidInputException(Translations().shelf_row_col_not_set_warn)
 
     def copies_is_valid(self):
+        """
+        Validates that number of copies is a number greater or equal to 1
+        :raises: InvalidInputException
+        """
         if not self.num_of_copies.isdigit() or int(self.num_of_copies) < 1:
             raise exc.InvalidInputException(Translations().num_of_copies_warn)
 
     def changed(self, book):
+        """
+        Detects any changes made in book fields compared to the book from DB
+        :param book: book loaded from DB
+        :return: True if any field is changed else False
+        """
         (title, author, translator, publisher,
          publication_year, isbn, copies, shelf) = self.get_book_attributes_in_schema_form()
         checks = [book.title != title.upper(),
@@ -225,6 +295,10 @@ class GuiBook(object):
         return any(checks)
 
     def update_book(self, book):
+        """
+        Migrate changes in fields to DB entry
+        :param book: book loaded from DB
+        """
         (title, author, translator, publisher,
          publication_year, isbn, copies, shelf) = self.get_book_attributes_in_schema_form()
         book.title = title

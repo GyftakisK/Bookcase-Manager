@@ -5,9 +5,11 @@ import bookcase_lib as lib
 
 
 class BookcaseGui(object):
+    """
+    Class to setup and run the root window
+    """
     def __init__(self):
-        path = lib.FileManager().path
-        self.lock = lib.InstanceLock(path)
+        self.lock = lib.InstanceLock(lib.FileManager().path)
         self.root = tk.Tk()
         self.toolbar = MainToolbar(self.root)
 

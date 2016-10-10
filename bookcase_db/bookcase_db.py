@@ -78,6 +78,9 @@ class BookcaseDbManager(object):
     def search_by_shelf(self, shelf):
         return self.session.query(Book).filter_by(shelf=shelf).all()
 
+    def search_by_genre(self, genre):
+        return self.session.query(Book).filter_by(genre=genre.upper()).all()
+
     def dump_table(self):
         """
         Dumps all entries to a 2-D array
@@ -108,8 +111,7 @@ class BookcaseDbManager(object):
         """
         return dict([(attribute, header.index(attribute)) for attribute in book_header() if attribute in header])
 
-    @staticmethod
-    def create_books_from_table(attributes_to_index, table):
+    def create_books_from_table(self, attributes_to_index, table):
         """
         Converts each row of the table to a book object
         :param attributes_to_index: a dict that maps indexes of header elements to the book elements
@@ -118,10 +120,19 @@ class BookcaseDbManager(object):
         """
         books = []
         for row in table:
-            book_args = dict()
-            for key, index in attributes_to_index.items():
-                book_args[key] = row[index]
-            if not book_args["author"] or not book_args["title"]:
+            try:
+                books.append(Book(**self.get_book_attributes_from_row(attributes_to_index, row)))
+            except KeyError:
                 continue
-            books.append(Book(**book_args))
         return books
+
+    @staticmethod
+    def get_book_attributes_from_row(attributes_to_index, row):
+        book_args = dict()
+        for key, index in attributes_to_index.items():
+            value = row[index]
+            if value:
+                book_args[key] = row[index]
+        if not book_args["author"] or not book_args["title"]:
+            raise KeyError
+        return book_args

@@ -15,9 +15,9 @@ class BookcaseDbManagerTestSuite(unittest.TestCase):
 
     def add_three_books(self):
         self.manager.add_book(title="Lord of the Rings: The fellowship of the Ring", author="J.R.Tolkien",
-                              isbn="978-960-04-0366-4")
+                              isbn="978-960-04-0366-4", genre="fantasy")
         self.manager.add_book(title="Lord of the Rings: The return of the king", author="J.R.Tolkien",
-                              isbn="978-960-04-0438-8")
+                              isbn="978-960-04-0438-8", genre="fantasy")
         self.manager.add_book(title="Pride and Prejudice", author="Jane Austin",
                               isbn="978-618-02-0088-1", shelf="1-1")
 
@@ -71,6 +71,11 @@ class BookcaseDbManagerTestSuite(unittest.TestCase):
         self.add_three_books()
         result = self.manager.search_by_shelf("1-1")
         self.assertEqual(len(result), 1)
+
+    def test_search_by_genre(self):
+        self.add_three_books()
+        result = self.manager.search_by_genre("fantasy")
+        self.assertEqual(len(result), 2)
 
     def test_delete_book(self):
         self.add_three_books()

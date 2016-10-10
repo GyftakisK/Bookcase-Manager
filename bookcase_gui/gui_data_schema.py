@@ -116,11 +116,11 @@ class GuiBook(object):
 
     @property
     def genre(self):
-        return self.genre.get()
+        return self._genre.get()
 
     @genre.setter
     def genre(self, val):
-        self.genre.set(val)
+        self._genre.set(val)
 
     def get_author_in_schema_form(self):
         """
@@ -177,6 +177,7 @@ class GuiBook(object):
         self.isbn = book.isbn
         self.num_of_copies = book.copies
         self.shelf_row, self.shelf_col = self.get_shelf_from_schema(book.shelf)
+        self.genre = book.genre
 
     def get_book_attributes_in_schema_form(self):
         """

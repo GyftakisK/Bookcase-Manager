@@ -13,6 +13,7 @@ setup(name="Bookcase Manager",
       options={
           'py2exe': {
               'packages': ['sqlalchemy', 'openpyxl'],
+              'includes': ['bookcase_db', 'bookcase_excel', 'bookcase_gui'],
               'bundle_files': 2
           }
       },

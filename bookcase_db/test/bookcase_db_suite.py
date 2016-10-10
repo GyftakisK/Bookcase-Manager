@@ -1,5 +1,6 @@
 import unittest
 from bookcase_db.bookcase_db import BookcaseDbManager
+import bookcase_exceptions as exc
 import os
 
 
@@ -13,9 +14,12 @@ class BookcaseDbManagerTestSuite(unittest.TestCase):
         self.manager.cleanup()
 
     def add_three_books(self):
-        self.manager.add_book("Lord of the Rings: The fellowship of the Ring", "J.R.Tolkien", isbn="978-960-04-0366-4")
-        self.manager.add_book("Lord of the Rings: The return of the king", "J.R.Tolkien", isbn="978-960-04-0438-8")
-        self.manager.add_book("Pride and Prejudice", "Jane Austin", isbn="978-618-02-0088-1", shelf="1-1")
+        self.manager.add_book(title="Lord of the Rings: The fellowship of the Ring", author="J.R.Tolkien",
+                              isbn="978-960-04-0366-4")
+        self.manager.add_book(title="Lord of the Rings: The return of the king", author="J.R.Tolkien",
+                              isbn="978-960-04-0438-8")
+        self.manager.add_book(title="Pride and Prejudice", author="Jane Austin",
+                              isbn="978-618-02-0088-1", shelf="1-1")
 
     @classmethod
     def tearDownClass(cls):
@@ -25,10 +29,17 @@ class BookcaseDbManagerTestSuite(unittest.TestCase):
         self.assertTrue(os.path.exists("bookcase.db"))
 
     def test_add_book(self):
-        self.manager.add_book("Lord of the Rings", "J.R.Tolkien")
+        self.manager.add_book(title="Lord of the Rings", author="J.R.Tolkien")
         rows = self.manager.get_all_books()
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[-1].title, "Lord of the Rings".upper())
+
+    def test_add_book_no_author(self):
+        try:
+            self.manager.add_book(title="Lord of the Rings")
+            self.fail()
+        except exc.InvalidInputException:
+            pass
 
     def test_add_two_books(self):
         self.add_three_books()
@@ -74,7 +85,7 @@ class BookcaseDbManagerTestSuite(unittest.TestCase):
         print(table)
         self.assertEqual(len(table), 4)
         self.assertEqual(table[0], ("title", "author", "translator", "publisher",
-                                    "publication_year", "isbn", "copies", "shelf"))
+                                    "publication_year", "isbn", "copies", "genre", "shelf"))
 
     def test_get_indexes_for_book_attribute_in_order(self):
         header = ("title", "author", "translator", "publisher", "publication_year", "isbn", "copies", "shelf")

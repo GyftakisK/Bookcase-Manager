@@ -35,16 +35,15 @@ class BookcaseDbManager(object):
     def create_db(self):
         Base.metadata.create_all(self.engine)
 
-    def add_book(self, title, author, translator="", publication_year="",
-                 isbn="", publisher="", shelf="", copies=1):
-        new_book = Book(author=author.upper(),
-                        title=title.upper(),
-                        isbn=isbn,
-                        publication_year=publication_year,
-                        publisher=publisher.upper(),
-                        translator=translator.upper(),
-                        shelf=shelf,
-                        copies=copies)
+    def add_book(self, **kwargs):
+        """
+        Adds a new book to database
+        :param kwargs: "title", "author", "translator", "publisher",
+            "publication_year", "isbn", "copies", "genre", "shelf"
+        """
+        if not "author" in kwargs.keys() or not "title" in kwargs.keys():
+            raise exc.InvalidInputException()
+        new_book = Book(**kwargs)
         self.session.add(new_book)
         print(new_book)
         self.session.flush()
@@ -119,22 +118,10 @@ class BookcaseDbManager(object):
         """
         books = []
         for row in table:
-            author = row[attributes_to_index["author"]]
-            title = row[attributes_to_index["title"]]
-            isbn = row[attributes_to_index["isbn"]]
-            publication_year = row[attributes_to_index["publication_year"]]
-            publisher = row[attributes_to_index["publisher"]]
-            translator = row[attributes_to_index["translator"]]
-            shelf = row[attributes_to_index["shelf"]]
-            copies = row[attributes_to_index["copies"]]
-            if not author or not title:
+            book_args = dict()
+            for key, index in attributes_to_index.items():
+                book_args[key] = row[index]
+            if not book_args["author"] or not book_args["title"]:
                 continue
-            books.append(Book(author=author.upper(),
-                              title=title.upper(),
-                              isbn=isbn if isbn else "",
-                              publication_year=publication_year if publication_year else -1,
-                              publisher=publisher.upper() if publisher else "",
-                              translator=translator.upper() if translator else "",
-                              shelf=shelf if shelf else "-",
-                              copies=copies))
+            books.append(Book(**book_args))
         return books

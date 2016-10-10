@@ -79,7 +79,7 @@ class BookcaseDbManager(object):
         return self.session.query(Book).filter_by(shelf=shelf).all()
 
     def search_by_genre(self, genre):
-        return self.session.query(Book).filter_by(genre=genre.upper()).all()
+        return self.session.query(Book).filter(Book.genre.contains(genre.upper())).all()
 
     def dump_table(self):
         """
@@ -113,7 +113,7 @@ class BookcaseDbManager(object):
 
     def create_books_from_table(self, attributes_to_index, table):
         """
-        Converts each row of the table to a book object
+        Converts all rows of the table to book objects
         :param attributes_to_index: a dict that maps indexes of header elements to the book elements
         :param table: a tuple of tuples containing multiple books
         :return: a list of book objects
@@ -121,8 +121,9 @@ class BookcaseDbManager(object):
         books = []
         for row in table:
             try:
-                books.append(Book(**self.get_book_attributes_from_row(attributes_to_index, row)))
-            except KeyError:
+                new_book = Book(**self.get_book_attributes_from_row(attributes_to_index, row))
+                books.append(new_book)
+            except exc.InvalidInputException:
                 continue
         return books
 
@@ -134,5 +135,5 @@ class BookcaseDbManager(object):
             if value:
                 book_args[key] = row[index]
         if not book_args["author"] or not book_args["title"]:
-            raise KeyError
+            raise exc.InvalidInputException
         return book_args

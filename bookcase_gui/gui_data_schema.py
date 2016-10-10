@@ -21,6 +21,7 @@ class GuiBook(object):
         self._shelf_row = StringVar()
         self._shelf_col = StringVar()
         self.num_of_copies = 1
+        self._genre = StringVar()
 
     def get_object(self, name):
         return getattr(self, "_" + name)
@@ -113,6 +114,14 @@ class GuiBook(object):
     def shelf_col(self, val):
         self._shelf_col.set(val)
 
+    @property
+    def genre(self):
+        return self.genre.get()
+
+    @genre.setter
+    def genre(self, val):
+        self.genre.set(val)
+
     def get_author_in_schema_form(self):
         """
         Wrapper method to convert author attribute from User to DB format
@@ -182,7 +191,8 @@ class GuiBook(object):
         isbn = self.isbn
         shelf = self.get_shelf_in_schema_form()
         copies = int(self.num_of_copies)
-        return title, author, translator, publisher, publication_year, isbn, copies, shelf
+        genre = self.genre
+        return title, author, translator, publisher, publication_year, isbn, copies, genre, shelf
 
     def clear_entries(self):
         """
@@ -199,6 +209,7 @@ class GuiBook(object):
         self.num_of_copies = 1
         self.shelf_row = ""
         self.shelf_col = ""
+        self.genre = ""
 
     def validate_book_inputs(self):
         """
@@ -283,7 +294,7 @@ class GuiBook(object):
         :return: True if any field is changed else False
         """
         (title, author, translator, publisher,
-         publication_year, isbn, copies, shelf) = self.get_book_attributes_in_schema_form()
+         publication_year, isbn, copies, genre, shelf) = self.get_book_attributes_in_schema_form()
         checks = [book.title != title.upper(),
                   book.author != author.upper(),
                   book.translator != translator.upper(),
@@ -291,7 +302,8 @@ class GuiBook(object):
                   book.publication_year != publication_year,
                   book.isbn != isbn.upper(),
                   book.copies != copies,
-                  book.shelf != shelf.upper()]
+                  book.shelf != shelf.upper(),
+                  book.genre != genre.upper()]
         return any(checks)
 
     def update_book(self, book):
@@ -300,7 +312,7 @@ class GuiBook(object):
         :param book: book loaded from DB
         """
         (title, author, translator, publisher,
-         publication_year, isbn, copies, shelf) = self.get_book_attributes_in_schema_form()
+         publication_year, isbn, copies, genre, shelf) = self.get_book_attributes_in_schema_form()
         book.title = title
         book.author = author
         book.translator = translator
@@ -309,3 +321,4 @@ class GuiBook(object):
         book.isbn = isbn
         book.copies = copies
         book.shelf = shelf
+        book.genre = genre

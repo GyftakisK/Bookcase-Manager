@@ -283,9 +283,10 @@ class BookView(tk.Frame):
              ("ISBN", (4, 0, 40, self.gui_book.get_object("isbn"))),
              (Translations().num_of_copies_desc,
               (4, 2, 20, self.gui_book.get_object("num_of_copies"))),
-             (Translations().shelf_row_desc, (5, 0, 25, self.gui_book.get_object("shelf_row"))),
+             (Translations().genre_text, (5, 0, 40, self.gui_book.get_object("genre"))),
+             (Translations().shelf_row_desc, (6, 0, 25, self.gui_book.get_object("shelf_row"))),
              (Translations().shelf_col_desc,
-              (5, 2, 25, self.gui_book.get_object("shelf_col")))])
+              (6, 2, 25, self.gui_book.get_object("shelf_col")))])
         self.db_manager = db_manager
         self.on_close_cb_func = on_close_cb_func
         self.buttons = None
@@ -404,7 +405,8 @@ class SearchView(tk.Frame):
     """
     def __init__(self, root, db_manager, on_close_cb_func):
         super(SearchView, self).__init__(root)
-        self.choices = (Translations().title_text, Translations().author_text, "ISBN", Translations().shelf_text)
+        self.choices = (Translations().title_text, Translations().author_text, "ISBN",
+                        Translations().shelf_text, Translations().genre_text)
         self.option = ttk.Combobox(self, values=self.choices, state="readonly", font=FONT_11_NORMAL)
         self.option.set(self.choices[0])
         self.search_str = tk.Entry(self, width=60, font=FONT_11_NORMAL)
@@ -467,6 +469,9 @@ class SearchView(tk.Frame):
             return self.db_manager.search_by_isbn(string)
         if option == Translations().shelf_text:
             return self.db_manager.search_by_shelf(string)
+        if option == Translations().genre_text:
+            return self.db_manager.search_by_genre(string)
+
 
     def open_book(self, event):
         """

@@ -35,10 +35,12 @@ class Translations(object, metaclass=lib.Singleton):
                              "gr": 'Εξαγωγή σε Excel'}
         self.found = {"en": 'Found',
                       "gr": 'Βρέθηκαν'}
+        self.genre_text = {"en": "Genre",
+                           "gr": "Είδος"}
         self.imported_from = {"en": 'Successfully Imported from ',
                               "gr": 'Επιτυχής Εισαγωγή από '}
         self.import_excel = {"en": 'Import from Excel',
-                             "gr":'Εισαγωγή από Excel'}
+                             "gr": 'Εισαγωγή από Excel'}
         self.import_export_desc = {"en": 'Import/Export Bookcase',
                                    "gr": 'Εισαγωγή/Εξαγωγή βιβλιοθήκης'}
         self.invalid_xl_msg = {"en": "Excel file not created by Bookcase Manager",
@@ -48,7 +50,7 @@ class Translations(object, metaclass=lib.Singleton):
         self.mandatory_fields_warn = {"en": 'Fields with asterisk (*) are mandatory',
                                       "gr": 'Τα πεδία με αστερίσκο (*) είναι υποχρεωτικά'}
         self.no_books_found_msg = {"en": 'No books found matching the search criteria',
-                                   "gr": 'Δε βρέθηκαν βιβλία που να ταιριάζον στα κριτήρια αναζήτησης'}
+                                   "gr": 'Δε βρέθηκαν βιβλία που να ταιριάζουν στα κριτήρια αναζήτησης'}
         self.no_file_found_msg = {"en": 'No matching files found under ',
                                   "gr": 'Δε βρέθηκαν αρχεία στο '}
         self.no_spaces_in_names_warn = {"en": 'Use - instead of spaces in names',
@@ -93,7 +95,7 @@ class Translations(object, metaclass=lib.Singleton):
         self.translator_first_name_desc = {"en": 'Translator First Name',
                                            "gr": 'Όνομα Μεταφραστη'}
         self.translator_last_name_desc = {"en": 'Translator Last Name',
-                                          "gr": 'Επώνυμο Μεταφραστή'}
+                                          "gr": 'Επίθετο Μεταφραστή'}
         self.translator_validation_warn = {"en": 'Both First and Last translator names should be set',
                                            "gr": 'Ο Μεταφραστλης πρέπεί να έχει όνομα και επώνυμο'}
         self.welcome_msg = {"en": 'Welcome',
